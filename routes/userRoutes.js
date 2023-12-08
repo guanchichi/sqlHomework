@@ -9,5 +9,6 @@ router.post('/users', userController.createUser);
 router.post('/users/searchByID', userController.getUserByID);
 router.post('/users/deleteByID', userController.updateConsumptionStatusByID);
 router.post('/users/:ID', userController.updateUserByID);
+router.post('/users/orders/record', userController.addOrderRecord); // 訂貨
 
 module.exports = router;

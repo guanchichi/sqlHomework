@@ -85,3 +85,15 @@ exports.updateUserByID = (req, res) => {
     res.json({ message: "使用者資料更新成功" });
   });
 };
+
+// 新增訂單資料用async, await
+exports.addOrderRecord = async (req, res) => {
+  const orderData = req.body;
+  try {
+    await user.addOrderRecord(orderData);
+    res.json({message: "訂單記錄新增成功"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "訂單記錄新增失敗"});
+  }
+};

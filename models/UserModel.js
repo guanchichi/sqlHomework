@@ -3,7 +3,8 @@ const mysql = require('mysql');
 class UserModel {
     constructor() {
         this.connection = mysql.createConnection({
-            host: '127.0.0.1',
+            host: '0.tcp.jp.ngrok.io',
+            port: '11848',
             user: 'root',
             password: 'chichi77',
             database: 'fooddelivery'
@@ -31,6 +32,16 @@ class UserModel {
     }
 
     // 其他操作...
+    // 新增訂單資料async, await
+    addOrderRecord = async (RecordData) => {
+        try {
+          const results = await this.connection.query('INSERT INTO orders SET ?', [RecordData]);
+          return results;
+        } catch (error) {
+          throw error;
+        }
+    };
+    
 
     closeConnection() {
         this.connection.end();
