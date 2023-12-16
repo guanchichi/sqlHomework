@@ -96,7 +96,6 @@ exports.addOrderRecord = async (req, res) => {
     console.log(error);
     res.status(500).json({message: "訂單記錄新增失敗"});
   }
-<<<<<<< HEAD
 };
 
 // 刪除訂單資料
@@ -127,6 +126,4 @@ exports.getOrderByIdAndProductNumber = async (req, res) => {
     return res.status(500).json({ message: "獲取訂單失敗" });
   }
 };
-=======
-};
->>>>>>> b871eb3e59740af310d663adde0ce9d7a67fab90
+
