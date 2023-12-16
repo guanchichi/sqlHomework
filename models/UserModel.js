@@ -3,8 +3,13 @@ const mysql = require('mysql');
 class UserModel {
     constructor() {
         this.connection = mysql.createConnection({
+<<<<<<< HEAD
             host: '127.0.0.1',
             port: '3306',
+=======
+            host: '0.tcp.jp.ngrok.io',
+            port: '11848',
+>>>>>>> b871eb3e59740af310d663adde0ce9d7a67fab90
             user: 'root',
             password: 'chichi77',
             database: 'fooddelivery'
@@ -41,6 +46,7 @@ class UserModel {
           throw error;
         }
     };
+<<<<<<< HEAD
 
     // 放進refundOrder table中
     insertRefundOrder = (RefundOrder) => {
@@ -87,6 +93,8 @@ class UserModel {
             });
         });
     }
+=======
+>>>>>>> b871eb3e59740af310d663adde0ce9d7a67fab90
     
 
     closeConnection() {
