@@ -85,3 +85,44 @@ exports.updateUserByID = (req, res) => {
     res.json({ message: "使用者資料更新成功" });
   });
 };
+
+// 新增訂單資料用async, await
+exports.addOrderRecord = async (req, res) => {
+  const orderData = req.body;
+  try {
+    await user.addOrderRecord(orderData);
+    res.json({message: "訂單記錄新增成功"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "訂單記錄新增失敗"});
+  }
+};
+
+// 刪除訂單資料
+exports.addOrderRefund = async (req, res) => {
+  const { CID, OProductNumber } = req.body;
+
+  try {
+    await user.addOrderRefund(CID, OProductNumber);
+    res.json("刪除訂單資料成功")
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "刪除訂單失敗"});
+  }
+}
+
+
+exports.getOrderByIdAndProductNumber = async (req, res) => {
+  const { CID, OProductNumber } = req.body;
+
+  try {
+    const order = await user.getOrderByIdAndProductNumber(CID, OProductNumber);
+    if (!order) {
+        return res.status(404).json({ message: "找不到該訂單" });
+    }
+    res.json(order);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
