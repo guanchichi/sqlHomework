@@ -43,6 +43,72 @@ class UserModel {
         this.connection.query('UPDATE client SET ConsumptionStatus = ? WHERE ID = ?', [newStatus, ID], callback);
     }
 
+    // 取得所有訂單資料
+    async getAllOrders() {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM orders', (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    // 取得所有產品
+    async getAllproduct() {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM product', (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    // 獲取所有refundorders
+    async getAllrefundorders() {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM refundorders', (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    // 獲取所有供應商
+    async getAllsuppliercompany() {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM suppliercompany', (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+
+    // 獲取所有進貨資料
+    async getAllsupply() {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM supply', (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results);
+                }
+            });
+        });
+    }
+    
+
     // 其他操作...
     // 新增訂單資料async, await
     addOrderRecord = async (RecordData) => {
@@ -106,7 +172,51 @@ class UserModel {
             });
         });
     }
+
+    async getProductByProductNumber(ProductNumber) {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM product WHERE ProductNumber = ?', [ProductNumber], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+    }
     
+    async getSupplierCompanyBySupplierNumber(SupplierNumber) {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM suppliercompany WHERE SupplierNumber = ?', [SupplierNumber], (error, results) => {
+                if (error) {
+                    return reject(error);
+                }
+                resolve(results);
+            });
+        });
+    }
+    
+
+    // 新增供應商
+    addSupplierCompany = async (CompanyData) => {
+        try {
+            const query = 'INSERT INTO suppliercompany SET ?';
+            const results = await this.connection.query(query, [CompanyData]);
+            return results;
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    addsupply = async (supplyData) => {
+        try {
+          const query = 'INSERT INTO supply SET ?';
+          const result = await this.connection.query(query, supplyData);
+          return result;
+        } catch (error) {
+          throw error;
+        }
+    }
+      
 
     closeConnection() {
         this.connection.end();

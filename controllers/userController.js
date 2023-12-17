@@ -54,10 +54,9 @@ exports.updateUserByID = (req, res) => {
 
 // 刪除資料：係將資料之消費狀態由「正常」改成「停用」
 exports.updateConsumptionStatusByID = (req, res) => {
-  const { ID } = req.params;
-  const { newStatus } = req.body;
-
-  user.updateConsumptionStatusByID(ID, newStatus, (error, results, fields) => {
+  const { ID } = req.body;
+  const { ConsumptionStatus } = req.body;
+  user.updateConsumptionStatusByID(ID, ConsumptionStatus, (error, results, fields) => {
     if (error) {
       res.status(500).json({ error: "更新消費狀態失敗" });
       throw error;
@@ -141,3 +140,86 @@ exports.getOrderByIdAndProductNumber = async (req, res) => {
   }
 };
 
+exports.addsupply = async (req, res) => {
+  const { supplyData } = req.body;
+
+  try {
+    const ProductNumber = await user.getProductByProductNumber(supplyData.OProductNumber);
+    const SupplierNumber = await user.getSupplierCompanyBySupplierNumber(supplyData.TSupplierNumber);
+    if (!ProductNumber){
+      return res.status(404).json({ message: "產品不存在"});
+    } else if (!SupplierNumber){
+      return res.status(404).json({ message: "供應商不存在"});
+    } else {
+      // 呼叫 usermodel.js 中的 addsupply 函式，將進貨資料新增至資料庫中
+      await user.addsupply(supplyData);
+      res.json({ message: "新增進貨成功" });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "新增進貨失敗" });
+  }
+}
+
+
+// 新增供應商資料用async, await
+exports.addSupplierCompany = async (req, res) => {
+  const CompanyData = req.body;
+  try {
+    await user.addSupplierCompany(CompanyData);
+    res.json({message: "供應商資料新增成功"});
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({message: "供應商資料新增失敗"});
+  }
+};
+
+exports.getAllOrders = async (req, res) => {
+  try {
+    const orders = await user.getAllOrders();
+    res.json({ orders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
+
+exports.getAllproduct = async (req, res) => {
+  try {
+    const product = await user.getAllproduct();
+    res.json({ product });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
+
+exports.getAllrefundorders = async (req, res) => {
+  try {
+    const refundorders = await user.getAllrefundorders();
+    res.json({ refundorders });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
+
+exports.getAllsuppliercompany = async (req, res) => {
+  try {
+    const suppliercompany = await user.getAllsuppliercompany();
+    res.json({ suppliercompany });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
+
+exports.getAllsupply = async (req, res) => {
+  try {
+    const supply = await user.getAllsupply();
+    res.json({ supply });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "獲取訂單失敗" });
+  }
+};
