@@ -15,15 +15,27 @@ class UserModel {
         this.connection.query('SELECT * FROM client', callback);
     }
 
-    getUserByID(ID, callback) {
-        this.connection.query('SELECT * FROM client WHERE ID = ?', [ID], callback);
-    }         
+    async getUserByID(ID) {
+        return new Promise((resolve, reject) => {
+            this.connection.query('SELECT * FROM client WHERE ID = ?', [ID], (error, results) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(results[0]);
+                }
+            });
+        });
+    }        
 
     createUser(newUser, callback) {
         this.connection.query('INSERT INTO client SET ?', newUser, callback);
     }
 
     updateUserByID(ID, updatedData, callback) {
+        console.log("1d278");
+        console.log(updatedData);
+        console.log(ID);
+        console.log("1d278");
         this.connection.query('UPDATE client SET ? WHERE ID = ?', [updatedData, ID], callback);
     }
     
@@ -35,7 +47,14 @@ class UserModel {
     // 新增訂單資料async, await
     addOrderRecord = async (RecordData) => {
         try {
+          const UserData = await this.getUserByID(RecordData.CID);
           const results = await this.connection.query('INSERT INTO orders SET ?', [RecordData]);
+          const updateAmount = {
+            "AmountToBeCollected": RecordData.Total + UserData.AmountToBeCollected
+          }
+          console.log(updateAmount);
+          console.log(RecordData.CID);
+          await this.updateUserByID(RecordData.CID, updateAmount);
           return results;
         } catch (error) {
           throw error;

@@ -28,25 +28,18 @@ exports.createUser = (req, res) => {
 };
 
 // 以身分證字號查詢使用者
-exports.getUserByID = (req, res) => {
-    const { ID } = req.body;
-
-    user.getUserByID(ID, (error, results, fields) => {
-        if (error) {
-            res.status(500).json({ error: "查詢使用者資料失敗" });
-            throw error;
-        }
-
-        if (!results || results.length === 0) {
-            res.status(404).json({ message: "找不到使用者資料" });
-            return;
-        }
-        res.json(results[0]);
-    });
+exports.getUserByID = async (req, res) => {
+  try {
+      const { ID } = req.body;
+      const userData = await user.getUserByID(ID);
+      res.json(userData);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
 };
 
 exports.updateUserByID = (req, res) => {
-    const { ID } = req.params;
+    const { ID } = req.body;
     const { updatedData } = req.body;
   
     user.updateUserByID(ID, updatedData, (error, results, fields) => {
@@ -73,17 +66,38 @@ exports.updateConsumptionStatusByID = (req, res) => {
   });
 };
 
-exports.updateUserByID = (req, res) => {
-  const { ID } = req.params;
-  const { updatedData } = req.body;
+// 測試用
+exports.updateConsumptionStatusByIDd = (req, res) => {
+  const { ID } = req.body;
+  const { ConsumptionStatus } = req.body;
 
-  user.updateUserByID(ID, updatedData, (error, results, fields) => {
-    if (error) {
-      res.status(500).json({ error: "更新使用者資料失敗" });
-      throw error;
-    }
-    res.json({ message: "使用者資料更新成功" });
-  });
+  console.log(ID);
+  console.log(ConsumptionStatus);
+  // console.log(req)
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+  res.json("XDDDDDDDDDD");
+  // user.updateConsumptionStatusByID(ID, newStatus, (error, results, fields) => {
+  //   if (error) {
+  //     res.status(500).json({ error: "更新消費狀態失敗" });
+  //     throw error;
+  //   }
+  //   res.json({ message: "消費狀態更新成功" });
+  // });
+};
+
+
+exports.updateUser = async (req, res) => {
+  const { ID, updatedData } = req.body;
+
+  try {
+    const result = await user.updateUserByID(ID, updatedData);
+    // 如果需要特定的回傳，可以根據結果進行適當處理
+    res.json({ message: 'User updated successfully', result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update user' });
+  }
 };
 
 // 新增訂單資料用async, await
