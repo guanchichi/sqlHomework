@@ -11,10 +11,12 @@ class UserModel {
         });
     }
 
+    // 取得所有客戶資料
     getAllUsers(callback) {
         this.connection.query('SELECT * FROM client', callback);
     }
 
+    // 用ID取得客戶資料
     async getUserByID(ID) {
         return new Promise((resolve, reject) => {
             this.connection.query('SELECT * FROM client WHERE ID = ?', [ID], (error, results) => {
@@ -27,18 +29,19 @@ class UserModel {
         });
     }        
 
+    // 新增客戶資料
     createUser(newUser, callback) {
         this.connection.query('INSERT INTO client SET ?', newUser, callback);
     }
 
+    // 用ID更新客戶資料
     updateUserByID(ID, updatedData, callback) {
-        console.log("1d278");
         console.log(updatedData);
         console.log(ID);
-        console.log("1d278");
         this.connection.query('UPDATE client SET ? WHERE ID = ?', [updatedData, ID], callback);
     }
-    
+
+    // 用ID更新消費狀態
     updateConsumptionStatusByID(ID, newStatus, callback) {
         this.connection.query('UPDATE client SET ConsumptionStatus = ? WHERE ID = ?', [newStatus, ID], callback);
     }
@@ -173,6 +176,7 @@ class UserModel {
         });
     }
 
+    // 用產品編號找產品
     async getProductByProductNumber(ProductNumber) {
         return new Promise((resolve, reject) => {
             this.connection.query('SELECT * FROM product WHERE ProductNumber = ?', [ProductNumber], (error, results) => {
@@ -183,7 +187,19 @@ class UserModel {
             });
         });
     }
+
+    // 新增產品
+    addProduct = async (ProductData) => {
+        try {
+            const query = 'INSERT INTO product SET ?';
+            const results = await this.connection.query(query, [ProductData]);
+            return results;
+        } catch (error) {
+            throw error;
+        }
+    }
     
+    // 用供應商編號找供應商
     async getSupplierCompanyBySupplierNumber(SupplierNumber) {
         return new Promise((resolve, reject) => {
             this.connection.query('SELECT * FROM suppliercompany WHERE SupplierNumber = ?', [SupplierNumber], (error, results) => {
@@ -207,6 +223,7 @@ class UserModel {
         }
     }
     
+    // 新增進貨
     addsupply = async (supplyData) => {
         try {
           const query = 'INSERT INTO supply SET ?';

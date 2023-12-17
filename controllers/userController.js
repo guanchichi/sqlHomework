@@ -1,9 +1,8 @@
-// controllers/userController.js
-
 const UserModel = require("../models/UserModel");
 
 const user = new UserModel();
 
+// 取得所有客戶資料
 exports.getAllUsers = (req, res) => {
   user.getAllUsers((error, results, fields) => {
     if (error) {
@@ -38,21 +37,22 @@ exports.getUserByID = async (req, res) => {
   }
 };
 
-exports.updateUserByID = (req, res) => {
-    const { ID } = req.body;
-    const { updatedData } = req.body;
+// // 用ID更新客戶資料
+// exports.updateUserByID = (req, res) => {
+//     const { ID } = req.body;
+//     const { updatedData } = req.body;
   
-    user.updateUserByID(ID, updatedData, (error, results, fields) => {
-      if (error) {
-        res.status(500).json({ error: "更新使用者資料失敗" });
-        throw error;
-      }
-      res.json({ message: "使用者資料更新成功" });
-    });
-  };
+//     user.updateUserByID(ID, updatedData, (error, results, fields) => {
+//       if (error) {
+//         res.status(500).json({ error: "更新使用者資料失敗" });
+//         throw error;
+//       }
+//       res.json({ message: "使用者資料更新成功" });
+//     });
+//   };
 
 
-// 刪除資料：係將資料之消費狀態由「正常」改成「停用」
+// 刪除資料：將資料之消費狀態由「正常」改成「停用」
 exports.updateConsumptionStatusByID = (req, res) => {
   const { ID } = req.body;
   const { ConsumptionStatus } = req.body;
@@ -65,33 +65,12 @@ exports.updateConsumptionStatusByID = (req, res) => {
   });
 };
 
-// 測試用
-exports.updateConsumptionStatusByIDd = (req, res) => {
-  const { ID } = req.body;
-  const { ConsumptionStatus } = req.body;
-
-  console.log(ID);
-  console.log(ConsumptionStatus);
-  // console.log(req)
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
-  res.json("XDDDDDDDDDD");
-  // user.updateConsumptionStatusByID(ID, newStatus, (error, results, fields) => {
-  //   if (error) {
-  //     res.status(500).json({ error: "更新消費狀態失敗" });
-  //     throw error;
-  //   }
-  //   res.json({ message: "消費狀態更新成功" });
-  // });
-};
-
-
+// 用ID更新客戶資料
 exports.updateUser = async (req, res) => {
   const { ID, updatedData } = req.body;
 
   try {
     const result = await user.updateUserByID(ID, updatedData);
-    // 如果需要特定的回傳，可以根據結果進行適當處理
     res.json({ message: 'User updated successfully', result });
   } catch (error) {
     console.error(error);
@@ -124,7 +103,7 @@ exports.addOrderRefund = async (req, res) => {
   }
 }
 
-
+// 根據ID及產品編號獲取訂單
 exports.getOrderByIdAndProductNumber = async (req, res) => {
   const { CID, OProductNumber } = req.body;
 
@@ -140,6 +119,19 @@ exports.getOrderByIdAndProductNumber = async (req, res) => {
   }
 };
 
+// 新增貨品
+exports.addProduct = async (req, res) => {
+  const { ProductData } = req.body;
+  try {
+    await user.addProduct(ProductData);
+    res.json({ message: "新增貨品成功"})
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "新增貨品失敗"})
+  }
+}
+
+// 新增進貨資料
 exports.addsupply = async (req, res) => {
   const { supplyData } = req.body;
 
@@ -174,40 +166,56 @@ exports.addSupplierCompany = async (req, res) => {
   }
 };
 
+// 藉由供應商編號獲得供應商資料
+exports.getSupplierCompanyBySupplierNumber = async (req, res) => {
+  const { SupplierNumber } = req.body;
+
+  try {
+    const results = await user.getSupplierCompanyBySupplierNumber(SupplierNumber);
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+}
+
+// 取得所有訂單資料
 exports.getAllOrders = async (req, res) => {
   try {
-    const orders = await user.getAllOrders();
-    res.json({ orders });
+    const ordersData = await user.getAllOrders();
+    res.json(ordersData);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "獲取訂單失敗" });
   }
 };
 
+// 取得所有產品
 exports.getAllproduct = async (req, res) => {
   try {
     const product = await user.getAllproduct();
-    res.json({ product });
+    res.json(product);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "獲取訂單失敗" });
   }
 };
 
+// 取得所有退貨訂單
 exports.getAllrefundorders = async (req, res) => {
   try {
     const refundorders = await user.getAllrefundorders();
-    res.json({ refundorders });
+    res.json(refundorders);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "獲取訂單失敗" });
   }
 };
 
+// 取得所有供應商資料
 exports.getAllsuppliercompany = async (req, res) => {
   try {
     const suppliercompany = await user.getAllsuppliercompany();
-    res.json({ suppliercompany });
+    res.json(suppliercompany);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "獲取訂單失敗" });
@@ -217,7 +225,7 @@ exports.getAllsuppliercompany = async (req, res) => {
 exports.getAllsupply = async (req, res) => {
   try {
     const supply = await user.getAllsupply();
-    res.json({ supply });
+    res.json(supply);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "獲取訂單失敗" });
