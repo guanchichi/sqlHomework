@@ -16,6 +16,7 @@ exports.getAllUsers = (req, res) => {
 // 新增使用者資料
 exports.createUser = (req, res) => {
   const newUser = req.body;
+  console.log(newUser);
 
   user.createUser(newUser, (error, results, fields) => {
     if (error) {
@@ -67,10 +68,10 @@ exports.updateConsumptionStatusByID = (req, res) => {
 
 // 用ID更新客戶資料
 exports.updateUser = async (req, res) => {
-  const { ID, updatedData } = req.body;
+  const { ID, Cname, PhoneNumber, Address, Age, Occupation, RegisterDate, Photo, ConsumptionStatus, AmountToBeCollected, ReceivableDate, ReceivableAmount } = req.body;
 
   try {
-    const result = await user.updateUserByID(ID, updatedData);
+    const result = await user.updateUserByID(ID, Cname, PhoneNumber, Address, Age, Occupation, RegisterDate, Photo, ConsumptionStatus, AmountToBeCollected, ReceivableDate, ReceivableAmount);
     res.json({ message: 'User updated successfully', result });
   } catch (error) {
     console.error(error);
@@ -80,7 +81,20 @@ exports.updateUser = async (req, res) => {
 
 // 新增訂單資料用async, await
 exports.addOrderRecord = async (req, res) => {
-  const orderData = req.body;
+  const { CID, OProductNumber, Unit, UnitPrice, OrderDate, EstimatedDeliveryDate, ActualDeliveryDate, Quantity, orderStatus} = req.body;
+  const orderData = {
+    CID, 
+    OProductNumber, 
+    Unit, 
+    UnitPrice, 
+    OrderDate, 
+    EstimatedDeliveryDate, 
+    ActualDeliveryDate, 
+    Total: UnitPrice*Quantity, 
+    Quantity, 
+    orderStatus
+  };
+
   try {
     await user.addOrderRecord(orderData);
     res.json({message: "訂單記錄新增成功"});
@@ -121,7 +135,14 @@ exports.getOrderByIdAndProductNumber = async (req, res) => {
 
 // 新增貨品
 exports.addProduct = async (req, res) => {
-  const { ProductData } = req.body;
+  const { ProductName, SupplierName, ProductNumber } = req.body;
+
+  const ProductData = {
+    ProductName,
+    SupplierName,
+    ProductNumber
+  };
+
   try {
     await user.addProduct(ProductData);
     res.json({ message: "新增貨品成功"})
@@ -133,7 +154,18 @@ exports.addProduct = async (req, res) => {
 
 // 新增進貨資料
 exports.addsupply = async (req, res) => {
-  const { supplyData } = req.body;
+  const { TProductNumber, TSupplierNumber, RestockUnit, RestockUnitPrice, RestockProductName, RestockSpecification, RestockLocation, RestockDate, RestockQuantity} = req.body;
+  const supplyData = {
+    TProductNumber, 
+    TSupplierNumber, 
+    RestockUnit, 
+    RestockUnitPrice, 
+    RestockProductName, 
+    RestockSpecification, 
+    RestockLocation, 
+    RestockDate, 
+    RestockQuantity
+  }
 
   try {
     const ProductNumber = await user.getProductByProductNumber(supplyData.OProductNumber);

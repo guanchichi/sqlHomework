@@ -35,11 +35,24 @@ class UserModel {
     }
 
     // 用ID更新客戶資料
-    updateUserByID(ID, updatedData, callback) {
-        console.log(updatedData);
-        console.log(ID);
+    updateUserByID(ID, Cname, PhoneNumber, Address, Age, Occupation, RegisterDate, Photo, ConsumptionStatus, AmountToBeCollected, ReceivableDate, ReceivableAmount, callback) {
+        const updatedData = {
+            Cname: Cname,
+            PhoneNumber: PhoneNumber,
+            Address: Address,
+            Age: Age,
+            Occupation: Occupation,
+            RegisterDate: RegisterDate,
+            Photo: Photo,
+            ConsumptionStatus: ConsumptionStatus,
+            AmountToBeCollected: AmountToBeCollected,
+            ReceivableDate: ReceivableDate,
+            ReceivableAmount: ReceivableAmount
+        };
+    
         this.connection.query('UPDATE client SET ? WHERE ID = ?', [updatedData, ID], callback);
     }
+    
 
     // 用ID更新消費狀態
     updateConsumptionStatusByID(ID, newStatus, callback) {
@@ -114,16 +127,18 @@ class UserModel {
 
     // 其他操作...
     // 新增訂單資料async, await
+    // updateUserByID(ID, Cname, PhoneNumber, Address, Age, Occupation, RegisterDate, Photo, ConsumptionStatus, AmountToBeCollected, ReceivableDate, ReceivableAmount)
     addOrderRecord = async (RecordData) => {
         try {
           const UserData = await this.getUserByID(RecordData.CID);
           const results = await this.connection.query('INSERT INTO orders SET ?', [RecordData]);
           const updateAmount = {
-            "AmountToBeCollected": RecordData.Total + UserData.AmountToBeCollected
+            "AmountToBeCollected": RecordData.UnitPrice*RecordData.Quantity + UserData.AmountToBeCollected
           }
           console.log(updateAmount);
           console.log(RecordData.CID);
-          await this.updateUserByID(RecordData.CID, updateAmount);
+          console.log(RecordData);
+          await this.updateUserByID(RecordData.CID, UserData.Cname, UserData.PhoneNumber, UserData.Address, UserData.Age, UserData.Occupation, UserData.RegisterDate, UserData.Photo, UserData.ConsumptionStatus, RecordData.Total + UserData.AmountToBeCollected, UserData.ReceivableDate, UserData.ReceivableAmount);
           return results;
         } catch (error) {
           throw error;
